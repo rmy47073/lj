@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv10 实时物体检测系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>YOLOv10 实时物体检测系统</h1>
+        
+        <div class="control-panel">
+            <div class="source-selection">
+                <label for="source-type">选择源类型:</label>
+                <select id="source-type">
+                    <option value="camera">电脑摄像头</option>
+                    <option value="video">视频文件</option>
+                </select>
+            </div>
+            <div id="camera-selector" class="source-option">
+                <label for="camera-id">摄像头ID:</label>
+                <input type="number" id="camera-id" value="0" min="0">
+            </div>
+            <div id="video-selector" class="source-option" style="display: none;">
+                <label for="video-file">视频文件:</label>
+                <select id="video-file"></select>
+            </div>
+            <button id="start-btn" class="btn btn-primary">开始检测</button>
+            <button id="stop-btn" class="btn btn-secondary" disabled>停止检测</button>
+        </div>
+        
+        <div class="video-container">
+            <div class="video-box">
+                <h3>原始画面</h3>
+                <img id="raw-video" src="" alt="原始画面">
+            </div>
+            <div class="video-box">
+                <h3>检测结果</h3>
+                <img id="processed-video" src="" alt="检测结果">
+            </div>
+            <div class="video-box">
+                <h3>俯视图 (轨迹)</h3>
+                <img id="birdview-video" src="" alt="俯视图">
+            </div>
+        </div>
+        
+        <div class="statistics">
+            <h3>统计信息</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">总检测物体数:</span>
+                    <span id="total-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">长时间停留物体:</span>
+                    <span id="long-stay-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">穿越中线物体:</span>
+                    <span id="crossing-count" class="stat-value">0</span>
+                </div>
+            </div>
+            <div class="category-stats">
+                <h4>物体类别统计</h4>
+                <div id="category-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
