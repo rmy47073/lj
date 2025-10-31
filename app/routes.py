@@ -173,6 +173,21 @@ def release_service(service_id):
     return jsonify({"success": True}), 200
 
 
+# Route: Force release all services (helpful to free camera device)
+@api_bp.route('/releaseAll', methods=['GET'])
+def release_all_services():
+    with thread_lock:
+        keys = list(yolo_services.keys())
+        for sid in keys:
+            srv = yolo_services.pop(sid)
+            try:
+                srv['service'].release()
+                srv['thread'].join(timeout=1)
+            except Exception:
+                pass
+    return jsonify({"success": True, "released": True}), 200
+
+
 # Route: Get runtime statistics of a service
 @api_bp.route('/getStatistics/<int:service_id>', methods=['POST'])
 @with_service

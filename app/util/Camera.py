@@ -35,12 +35,35 @@ class Camera:
             # 对于电脑摄像头，将cap_path转换为整数
             try:
                 camera_id = int(cap_path)
-                self.cap = cv2.VideoCapture(camera_id)
-                # 设置摄像头参数以提高兼容性
-                self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-                self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-                self.cap.set(cv2.CAP_PROP_FPS, 30)
-                print(f"Camera initialized with ID: {camera_id}")
+                # 尝试不同后端以提升 Windows 兼容性
+                tried = []
+                cap = cv2.VideoCapture(camera_id)
+                tried.append("DEFAULT")
+                if not cap.isOpened():
+                    cap.release()
+                    try:
+                        cap = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
+                        tried.append("CAP_DSHOW")
+                    except Exception:
+                        pass
+                if not cap.isOpened():
+                    cap.release()
+                    try:
+                        cap = cv2.VideoCapture(camera_id, cv2.CAP_MSMF)
+                        tried.append("CAP_MSMF")
+                    except Exception:
+                        pass
+
+                self.cap = cap
+                if self.cap is not None and self.cap.isOpened():
+                    # 设置摄像头参数以提高兼容性
+                    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                    self.cap.set(cv2.CAP_PROP_FPS, 30)
+                    print(f"Camera initialized with ID: {camera_id}, backends tried: {tried}")
+                else:
+                    print(f"Failed to open camera {camera_id}, backends tried: {tried}")
+                    self.cap = None
             except ValueError:
                 print(f"Invalid camera ID: {cap_path}")
                 self.cap = None
